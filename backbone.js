@@ -120,7 +120,7 @@
         this._events = void 0;
         return this;
       }
-      names = name ? [name] : _.keys(this._events);
+      names = (name && name.charAt(0) === ':') ? _.filter(_.keys(this._events), function(key){return key.indexOf(name) > -1}) : name ? [name] : _.keys(this._events);
       for (i = 0, l = names.length; i < l; i++) {
         name = names[i];
         if (events = this._events[name]) {
@@ -149,8 +149,15 @@
       if (!this._events) return this;
       var args = slice.call(arguments, 1);
       if (!eventsApi(this, 'trigger', name, args)) return this;
+      if (name.charAt(0) === ":") {
+        var namespace = {}
+        _.each(this._events, function(obj, key){
+           if( key.split(':')[1] === name.slice(1) ) namespace[key] = obj;
+        });
+      }
       var events = this._events[name];
       var allEvents = this._events.all;
+      if (namespace) _.each(namespace, function(vent){ triggerEvents(vent, args); });
       if (events) triggerEvents(events, args);
       if (allEvents) triggerEvents(allEvents, arguments);
       return this;

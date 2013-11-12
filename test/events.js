@@ -474,4 +474,20 @@
     equal(obj, obj.stopListening());
   });
 
+  test("namespaced events are triggerable", 2, function(){
+    var obj = _.extend({}, Backbone.Events);
+    obj.on("event:module", function(){ ok(true); });
+    obj.on("event:change", function(){ ok(false); });
+    obj.on("event2:module", function(){ ok(true); });
+    obj.trigger(":module");
+  });
+
+  test("namespaced events can be removed", 0, function(){
+    var obj = _.extend({}, Backbone.Events);
+    obj.on("event:module", function(){ ok(true); });
+    obj.on("event2:module", function(){ ok(true); });
+    obj.off(':module');
+    obj.trigger(':module');
+  });
+
 })();
